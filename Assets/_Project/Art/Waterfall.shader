@@ -448,7 +448,7 @@ Shader "Waterfall"
 			sampler2D _CameraOpaqueTexture;
 
 
-			float3 PerturbNormal107_g40( float3 surf_pos, float3 surf_norm, float height, float scale )
+			float3 PerturbNormal107_g53( float3 surf_pos, float3 surf_norm, float height, float scale )
 			{
 				// "Bump Mapping Unparametrized Surfaces on the GPU" by Morten S. Mikkelsen
 				float3 vSigmaS = ddx( surf_pos );
@@ -463,7 +463,7 @@ Shader "Waterfall"
 				return normalize ( abs( fDet ) * vN - vSurfGrad );
 			}
 			
-			float3 PerturbNormal107_g41( float3 surf_pos, float3 surf_norm, float height, float scale )
+			float3 PerturbNormal107_g54( float3 surf_pos, float3 surf_norm, float height, float scale )
 			{
 				// "Bump Mapping Unparametrized Surfaces on the GPU" by Morten S. Mikkelsen
 				float3 vSigmaS = ddx( surf_pos );
@@ -490,29 +490,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -726,45 +726,45 @@ Shader "Waterfall"
 				float3 lerpResult120 = lerp( _ColourB.rgb , _ColourA.rgb , pow( Curve27 , _ColourPower ));
 				float3 Colour121 = lerpResult120;
 				
-				float3 surf_pos107_g40 = WorldPosition;
-				float3 surf_norm107_g40 = WorldNormal;
-				float height107_g40 = Curve27;
-				float scale107_g40 = _CurveNormalStrength;
-				float3 localPerturbNormal107_g40 = PerturbNormal107_g40( surf_pos107_g40 , surf_norm107_g40 , height107_g40 , scale107_g40 );
+				float3 surf_pos107_g53 = WorldPosition;
+				float3 surf_norm107_g53 = WorldNormal;
+				float height107_g53 = Curve27;
+				float scale107_g53 = _CurveNormalStrength;
+				float3 localPerturbNormal107_g53 = PerturbNormal107_g53( surf_pos107_g53 , surf_norm107_g53 , height107_g53 , scale107_g53 );
 				float3x3 ase_worldToTangent = float3x3(WorldTangent,WorldBiTangent,WorldNormal);
-				float3 worldToTangentDir42_g40 = mul( ase_worldToTangent, localPerturbNormal107_g40);
-				float3 Curve_Normals144 = worldToTangentDir42_g40;
-				float3 surf_pos107_g41 = WorldPosition;
-				float3 surf_norm107_g41 = WorldNormal;
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float3 worldToTangentDir42_g53 = mul( ase_worldToTangent, localPerturbNormal107_g53);
+				float3 Curve_Normals144 = worldToTangentDir42_g53;
+				float3 surf_pos107_g54 = WorldPosition;
+				float3 surf_norm107_g54 = WorldNormal;
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord9.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord9.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord9.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
-				float height107_g41 = Noise69;
-				float scale107_g41 = _NoiseNormalStrength;
-				float3 localPerturbNormal107_g41 = PerturbNormal107_g41( surf_pos107_g41 , surf_norm107_g41 , height107_g41 , scale107_g41 );
-				float3 worldToTangentDir42_g41 = mul( ase_worldToTangent, localPerturbNormal107_g41);
-				float3 Noise_Normals139 = worldToTangentDir42_g41;
+				float height107_g54 = Noise69;
+				float scale107_g54 = _NoiseNormalStrength;
+				float3 localPerturbNormal107_g54 = PerturbNormal107_g54( surf_pos107_g54 , surf_norm107_g54 , height107_g54 , scale107_g54 );
+				float3 worldToTangentDir42_g54 = mul( ase_worldToTangent, localPerturbNormal107_g54);
+				float3 Noise_Normals139 = worldToTangentDir42_g54;
 				float3 Normals146 = BlendNormal( Curve_Normals144 , Noise_Normals139 );
 				
 				float3 lerpResult174 = lerp( float3( 0,0,0 ) , Colour121 , _ColourtoEmission);
@@ -1238,29 +1238,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -1428,32 +1428,32 @@ Shader "Waterfall"
 					#endif
 				#endif
 
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float2 texCoord10 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float2 texCoord75 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -1703,29 +1703,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -1875,32 +1875,32 @@ Shader "Waterfall"
 					#endif
 				#endif
 
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float2 texCoord10 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float2 texCoord75 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -2129,29 +2129,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -2327,29 +2327,29 @@ Shader "Waterfall"
 				float3 lerpResult174 = lerp( float3( 0,0,0 ) , Colour121 , _ColourtoEmission);
 				float3 Emission172 = lerpResult174;
 				
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord5.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord5.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord5.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float2 texCoord75 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -2573,29 +2573,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -2749,29 +2749,29 @@ Shader "Waterfall"
 				float3 lerpResult120 = lerp( _ColourB.rgb , _ColourA.rgb , pow( Curve27 , _ColourPower ));
 				float3 Colour121 = lerpResult120;
 				
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord3.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float2 texCoord75 = IN.ase_texcoord2.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -3012,7 +3012,7 @@ Shader "Waterfall"
 			sampler2D _CameraOpaqueTexture;
 
 
-			float3 PerturbNormal107_g40( float3 surf_pos, float3 surf_norm, float height, float scale )
+			float3 PerturbNormal107_g53( float3 surf_pos, float3 surf_norm, float height, float scale )
 			{
 				// "Bump Mapping Unparametrized Surfaces on the GPU" by Morten S. Mikkelsen
 				float3 vSigmaS = ddx( surf_pos );
@@ -3027,7 +3027,7 @@ Shader "Waterfall"
 				return normalize ( abs( fDet ) * vN - vSurfGrad );
 			}
 			
-			float3 PerturbNormal107_g41( float3 surf_pos, float3 surf_norm, float height, float scale )
+			float3 PerturbNormal107_g54( float3 surf_pos, float3 surf_norm, float height, float scale )
 			{
 				// "Bump Mapping Unparametrized Surfaces on the GPU" by Morten S. Mikkelsen
 				float3 vSigmaS = ddx( surf_pos );
@@ -3054,29 +3054,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -3249,49 +3249,49 @@ Shader "Waterfall"
 					#endif
 				#endif
 
-				float3 surf_pos107_g40 = WorldPosition;
-				float3 surf_norm107_g40 = WorldNormal;
+				float3 surf_pos107_g53 = WorldPosition;
+				float3 surf_norm107_g53 = WorldNormal;
 				float2 texCoord10 = IN.ase_texcoord5.xy * float2( 1,1 ) + float2( 0,0 );
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
-				float height107_g40 = Curve27;
-				float scale107_g40 = _CurveNormalStrength;
-				float3 localPerturbNormal107_g40 = PerturbNormal107_g40( surf_pos107_g40 , surf_norm107_g40 , height107_g40 , scale107_g40 );
+				float height107_g53 = Curve27;
+				float scale107_g53 = _CurveNormalStrength;
+				float3 localPerturbNormal107_g53 = PerturbNormal107_g53( surf_pos107_g53 , surf_norm107_g53 , height107_g53 , scale107_g53 );
 				float3 ase_worldBitangent = IN.ase_texcoord6.xyz;
 				float3x3 ase_worldToTangent = float3x3(WorldTangent.xyz,ase_worldBitangent,WorldNormal);
-				float3 worldToTangentDir42_g40 = mul( ase_worldToTangent, localPerturbNormal107_g40);
-				float3 Curve_Normals144 = worldToTangentDir42_g40;
-				float3 surf_pos107_g41 = WorldPosition;
-				float3 surf_norm107_g41 = WorldNormal;
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float3 worldToTangentDir42_g53 = mul( ase_worldToTangent, localPerturbNormal107_g53);
+				float3 Curve_Normals144 = worldToTangentDir42_g53;
+				float3 surf_pos107_g54 = WorldPosition;
+				float3 surf_norm107_g54 = WorldNormal;
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord7.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord7.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord7.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
-				float height107_g41 = Noise69;
-				float scale107_g41 = _NoiseNormalStrength;
-				float3 localPerturbNormal107_g41 = PerturbNormal107_g41( surf_pos107_g41 , surf_norm107_g41 , height107_g41 , scale107_g41 );
-				float3 worldToTangentDir42_g41 = mul( ase_worldToTangent, localPerturbNormal107_g41);
-				float3 Noise_Normals139 = worldToTangentDir42_g41;
+				float height107_g54 = Noise69;
+				float scale107_g54 = _NoiseNormalStrength;
+				float3 localPerturbNormal107_g54 = PerturbNormal107_g54( surf_pos107_g54 , surf_norm107_g54 , height107_g54 , scale107_g54 );
+				float3 worldToTangentDir42_g54 = mul( ase_worldToTangent, localPerturbNormal107_g54);
+				float3 Noise_Normals139 = worldToTangentDir42_g54;
 				float3 Normals146 = BlendNormal( Curve_Normals144 , Noise_Normals139 );
 				
 				float2 texCoord75 = IN.ase_texcoord5.xy * float2( 1,1 ) + float2( 0,0 );
@@ -3554,29 +3554,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -3701,32 +3701,32 @@ Shader "Waterfall"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float2 texCoord10 = IN.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float2 texCoord75 = IN.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -3963,29 +3963,29 @@ Shader "Waterfall"
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float3 Curve_Vertex_Offset289 = ( Curve27 * _CurveAxis * _Curve );
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( v.positionOS.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( v.positionOS.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float3 lerpResult238 = lerp( v.normalOS , float3( 1,0,0 ) , pow( Curve27 , _CurveVertexNormalPower ));
 				float3 normalizeResult242 = normalize( lerpResult238 );
@@ -4109,32 +4109,32 @@ Shader "Waterfall"
 			{
 				SurfaceDescription surfaceDescription = (SurfaceDescription)0;
 
-				float localSimplexNoise_Caustics_float2_g35 = ( 0.0 );
+				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float2 texCoord10 = IN.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
 				float temp_output_1_0_g1 = _CurveRemapMin;
 				float Curve27 = saturate( ( ( pow( ( 1.0 - ( texCoord10.x - _CurveShift ) ) , _CurvePower ) - temp_output_1_0_g1 ) / ( _CurveRemapMax - temp_output_1_0_g1 ) ) );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
 				float3 lerpResult62 = lerp( _NoiseTiling1 , _NoiseTiling2 , temp_output_64_0);
-				float localSimplexNoise_float2_g42 = ( 0.0 );
+				float localSimplexNoise_float2_g49 = ( 0.0 );
 				float4 temp_output_10_0_g47 = ( float4( ( IN.ase_texcoord.xyz * _NoiseDistortionScale * lerpResult62 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _NoiseDistortionAnimation * _TimeParameters.x ) ) );
-				float3 position2_g42 = (temp_output_10_0_g47).xyz;
-				float angle2_g42 = (temp_output_10_0_g47).w;
-				float octaves2_g42 = _NoiseDistortionOctaves;
-				float noise2_g42 = 0.0;
-				float3 gradient2_g42 = float3( 0,0,0 );
-				SimplexNoise_float( position2_g42 , angle2_g42 , octaves2_g42 , noise2_g42 , gradient2_g42 );
-				float3 Noise_Distortion248 = ( gradient2_g42 * _NoiseDistortion );
-				float temp_output_6_0_g46 = (float)(int)_NoiseAnimationFPS;
-				float temp_output_1_0_g46 = ( _TimeParameters.x * temp_output_6_0_g46 );
-				float4 temp_output_10_0_g45 = ( float4( ( IN.ase_texcoord.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g46 ) / temp_output_6_0_g46 ) ) ) );
-				float3 position2_g35 = (temp_output_10_0_g45).xyz;
-				float angle2_g35 = (temp_output_10_0_g45).w;
-				float octaves2_g35 = 1.0;
-				float gradientStrength2_g35 = 0.01;
-				float noise2_g35 = 0.0;
-				float3 gradient2_g35 = float3( 0,0,0 );
-				SimplexNoise_Caustics_float( position2_g35 , angle2_g35 , octaves2_g35 , gradientStrength2_g35 , noise2_g35 , gradient2_g35 );
-				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g35 , _NoisePower ));
+				float3 position2_g49 = (temp_output_10_0_g47).xyz;
+				float angle2_g49 = (temp_output_10_0_g47).w;
+				float octaves2_g49 = _NoiseDistortionOctaves;
+				float noise2_g49 = 0.0;
+				float3 gradient2_g49 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g49 , angle2_g49 , octaves2_g49 , noise2_g49 , gradient2_g49 );
+				float3 Noise_Distortion248 = ( gradient2_g49 * _NoiseDistortion );
+				float temp_output_6_0_g51 = (float)(int)_NoiseAnimationFPS;
+				float temp_output_1_0_g51 = ( _TimeParameters.x * temp_output_6_0_g51 );
+				float4 temp_output_10_0_g50 = ( float4( ( IN.ase_texcoord.xyz * _NoiseScale * lerpResult62 ) , 0.0 ) - ( ( _NoiseOffset + float4( Noise_Distortion248 , 0.0 ) ) + ( _NoiseAnimation * ( floor( temp_output_1_0_g51 ) / temp_output_6_0_g51 ) ) ) );
+				float3 position2_g52 = (temp_output_10_0_g50).xyz;
+				float angle2_g52 = (temp_output_10_0_g50).w;
+				float octaves2_g52 = 1.0;
+				float gradientStrength2_g52 = 0.01;
+				float noise2_g52 = 0.0;
+				float3 gradient2_g52 = float3( 0,0,0 );
+				SimplexNoise_Caustics_float( position2_g52 , angle2_g52 , octaves2_g52 , gradientStrength2_g52 , noise2_g52 , gradient2_g52 );
+				float smoothstepResult72 = smoothstep( _NoiseRemapMin , _NoiseRemapMax , pow( noise2_g52 , _NoisePower ));
 				float Noise69 = saturate( smoothstepResult72 );
 				float2 texCoord75 = IN.ase_texcoord1.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -4215,7 +4215,7 @@ Node;AmplifyShaderEditor.Vector4Node;257;-3456,-128;Inherit;False;Property;_Nois
 Node;AmplifyShaderEditor.LerpOp;62;-2944,256;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RangedFloatNode;254;-2944,-384;Inherit;False;Property;_NoiseDistortionOctaves;Noise Distortion Octaves;42;1;[IntRange];Create;True;0;0;0;False;0;False;1;1;1;8;0;1;FLOAT;0
 Node;AmplifyShaderEditor.FunctionNode;287;-2944,-640;Inherit;False;Scale Tiling Offset Animation;-1;;47;5d06ea95f1a5de046a6557c33d98975a;1,21,0;6;4;FLOAT3;0,0,0;False;7;FLOAT;1;False;8;FLOAT3;1,1,1;False;9;FLOAT4;0,0,0,0;False;19;INT;60;False;12;FLOAT4;0,0,0,0;False;2;FLOAT3;0;FLOAT;15
-Node;AmplifyShaderEditor.FunctionNode;247;-2560,-640;Inherit;False;Simplex Noise;-1;;42;2176dbf1d4f695d429b50c644e5b760c;0;3;4;FLOAT3;0,0,0;False;6;FLOAT;0;False;7;FLOAT;1;False;2;FLOAT;0;FLOAT3;3
+Node;AmplifyShaderEditor.FunctionNode;247;-2560,-640;Inherit;False;Simplex Noise;-1;;49;2176dbf1d4f695d429b50c644e5b760c;0;3;4;FLOAT3;0,0,0;False;6;FLOAT;0;False;7;FLOAT;1;False;2;FLOAT;0;FLOAT3;3
 Node;AmplifyShaderEditor.RangedFloatNode;259;-2560,-512;Inherit;False;Property;_NoiseDistortion;Noise Distortion;37;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;258;-2176,-640;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;248;-1920,-640;Inherit;False;Noise Distortion;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
@@ -4230,9 +4230,9 @@ Node;AmplifyShaderEditor.RangedFloatNode;128;-2560,400;Inherit;False;Constant;_N
 Node;AmplifyShaderEditor.RangedFloatNode;127;-2560,320;Inherit;False;Constant;_NoiseOctaves;Noise Octaves;26;1;[IntRange];Create;True;0;0;0;False;0;False;1;0;1;8;0;1;FLOAT;0
 Node;AmplifyShaderEditor.TextureCoordinatesNode;75;-3584,1024;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.PiNode;78;-3584,1152;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;286;-2560,128;Inherit;False;Scale Tiling Offset Animation;-1;;45;5d06ea95f1a5de046a6557c33d98975a;1,21,1;6;4;FLOAT3;0,0,0;False;7;FLOAT;1;False;8;FLOAT3;1,1,1;False;9;FLOAT4;0,0,0,0;False;19;INT;60;False;12;FLOAT4;0,0,0,0;False;2;FLOAT3;0;FLOAT;15
+Node;AmplifyShaderEditor.FunctionNode;286;-2560,128;Inherit;False;Scale Tiling Offset Animation;-1;;50;5d06ea95f1a5de046a6557c33d98975a;1,21,1;6;4;FLOAT3;0,0,0;False;7;FLOAT;1;False;8;FLOAT3;1,1,1;False;9;FLOAT4;0,0,0,0;False;19;INT;60;False;12;FLOAT4;0,0,0,0;False;2;FLOAT3;0;FLOAT;15
 Node;AmplifyShaderEditor.RangedFloatNode;60;-2176,304;Inherit;False;Property;_NoisePower;Noise Power;20;0;Create;True;0;0;0;False;0;False;2;2;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;126;-2176,128;Inherit;False;Simplex Noise Caustics;-1;;35;98a1798b2570f38468e950c4531ce09b;0;4;4;FLOAT3;0,0,0;False;6;FLOAT;0;False;7;FLOAT;1;False;9;FLOAT;0.01;False;2;FLOAT;0;FLOAT3;3
+Node;AmplifyShaderEditor.FunctionNode;126;-2176,128;Inherit;False;Simplex Noise Caustics;-1;;52;98a1798b2570f38468e950c4531ce09b;0;4;4;FLOAT3;0,0,0;False;6;FLOAT;0;False;7;FLOAT;1;False;9;FLOAT;0.01;False;2;FLOAT;0;FLOAT3;3
 Node;AmplifyShaderEditor.TextureCoordinatesNode;101;-3584,1280;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.PiNode;102;-3584,1408;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;77;-3328,1024;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
@@ -4306,7 +4306,7 @@ Node;AmplifyShaderEditor.GetLocalVarNode;170;-2304,1024;Inherit;False;163;Specul
 Node;AmplifyShaderEditor.RegisterLocalVarNode;188;-640,2176;Inherit;False;Noise Vertex Offset;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;289;-1664,-1152;Inherit;False;Curve Vertex Offset;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;80;-1920,768;Inherit;False;5;5;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;4;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;276;-1920,944;Inherit;False;Property;_AlphaOutput;Alpha Output;44;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;276;-1920,944;Inherit;False;Property;_AlphaOutput;Alpha Output;45;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;189;-1792,2432;Inherit;False;289;Curve Vertex Offset;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;180;-1792,2528;Inherit;False;188;Noise Vertex Offset;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.LerpOp;275;-1536,896;Inherit;False;3;0;FLOAT;1;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
@@ -4318,7 +4318,7 @@ Node;AmplifyShaderEditor.Vector3Node;256;-3712,-512;Inherit;False;Property;_Nois
 Node;AmplifyShaderEditor.LerpOp;260;-3328,-512;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;142;-2048,1280;Inherit;False;27;Curve;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;143;-2048,1360;Inherit;False;Property;_CurveNormalStrength;Curve Normal Strength;23;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;141;-1664,1280;Inherit;False;Normal From Height;-1;;40;1942fe2c5f1a1f94881a33d532e4afeb;0;2;20;FLOAT;0;False;110;FLOAT;1;False;2;FLOAT3;40;FLOAT3;0
+Node;AmplifyShaderEditor.FunctionNode;141;-1664,1280;Inherit;False;Normal From Height;-1;;53;1942fe2c5f1a1f94881a33d532e4afeb;0;2;20;FLOAT;0;False;110;FLOAT;1;False;2;FLOAT3;40;FLOAT3;0
 Node;AmplifyShaderEditor.ColorNode;71;-1536,-768;Inherit;False;Property;_ColourA;Colour A;1;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.ColorNode;119;-1536,-576;Inherit;False;Property;_ColourB;Colour B;0;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.GetLocalVarNode;118;-1536,-384;Inherit;False;27;Curve;1;0;OBJECT;;False;1;FLOAT;0
@@ -4329,7 +4329,7 @@ Node;AmplifyShaderEditor.GetLocalVarNode;176;-1536,-128;Inherit;False;121;Colour
 Node;AmplifyShaderEditor.RangedFloatNode;177;-1536,-48;Inherit;False;Property;_ColourtoEmission;Colour to Emission;5;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;144;-1280,1280;Inherit;False;Curve Normals;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;139;-1280,1536;Inherit;False;Noise Normals;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.FunctionNode;136;-1664,1536;Inherit;False;Normal From Height;-1;;41;1942fe2c5f1a1f94881a33d532e4afeb;0;2;20;FLOAT;0;False;110;FLOAT;1;False;2;FLOAT3;40;FLOAT3;0
+Node;AmplifyShaderEditor.FunctionNode;136;-1664,1536;Inherit;False;Normal From Height;-1;;54;1942fe2c5f1a1f94881a33d532e4afeb;0;2;20;FLOAT;0;False;110;FLOAT;1;False;2;FLOAT3;40;FLOAT3;0
 Node;AmplifyShaderEditor.RangedFloatNode;138;-2048,1616;Inherit;False;Property;_NoiseNormalStrength;Noise Normal Strength;24;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.BlendNormalsNode;145;-896,1408;Inherit;False;0;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;137;-2048,1536;Inherit;False;69;Noise;1;0;OBJECT;;False;1;FLOAT;0
@@ -4350,7 +4350,7 @@ Node;AmplifyShaderEditor.ScreenPosInputsNode;268;-5376,256;Float;False;0;False;0
 Node;AmplifyShaderEditor.RangedFloatNode;274;-5376,512;Inherit;False;Property;_CameraOpaqueTextureDistortion;Camera Opaque Texture Distortion;43;0;Create;True;0;0;0;False;0;False;0;0;0;0.1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;178;-896,560;Inherit;False;172;Emission;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;172;-384,-384;Inherit;False;Emission;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.TexturePropertyNode;262;-4608,-128;Inherit;True;Global;_CameraOpaqueTexture;_CameraOpaqueTexture;43;0;Create;True;0;0;0;True;0;False;None;;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
+Node;AmplifyShaderEditor.TexturePropertyNode;262;-4608,-128;Inherit;True;Global;_CameraOpaqueTexture;_CameraOpaqueTexture;44;0;Create;True;0;0;0;True;0;False;None;;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
 Node;AmplifyShaderEditor.GetLocalVarNode;122;-896,384;Inherit;False;121;Colour;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.LerpOp;120;-1024,-768;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;279;-1024,-896;Inherit;False;269;Camera Opaque Texture Colour;1;0;OBJECT;;False;1;FLOAT3;0
@@ -4523,4 +4523,4 @@ WireConnection;1;4;135;0
 WireConnection;1;6;70;0
 WireConnection;1;8;32;0
 ASEEND*/
-//CHKSM=91B97E46EAD6FAB255BCD43A1C416452083F2C18
+//CHKSM=C471D7A6162068F8193B05ED7FC846E04C19CB78
