@@ -103,6 +103,13 @@ Material:
     - _CurveVertexNormalPower: 0.1
     - _Cutoff: 0.5
     - _DepthFade: 1
+    - _DepthSparklesDistance: 1.2
+    - _DepthSparklesNoiseOctaves: 2
+    - _DepthSparklesNoisePower: 1
+    - _DepthSparklesNoiseScale: 3
+    - _DepthSparklesNoiseTilingMaskPower: 0.5
+    - _DepthSparklesRemapMax: 0.9
+    - _DepthSparklesRemapMin: 0.8
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -169,6 +176,10 @@ Material:
     - _ColourA: {r: 47.93726, g: 10.978155, b: 0, a: 1}
     - _ColourB: {r: 0, g: 1.0493488, b: 4, a: 1}
     - _CurveAxis: {r: 0, g: 1, b: 0, a: 0}
+    - _DepthSparklesColour: {r: 1782.8878, g: 284.43726, b: 0, a: 1}
+    - _DepthSparklesNoiseAnimation: {r: 30, g: 1, b: 0, a: 1}
+    - _DepthSparklesNoiseTiling1: {r: 1, g: 1, b: 1, a: 0}
+    - _DepthSparklesNoiseTiling2: {r: 2, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _NoiseAnimation: {r: 5, g: 0, b: 0, a: 0}
     - _NoiseDistortionAnimation: {r: 0, g: 0, b: 0, a: 2}

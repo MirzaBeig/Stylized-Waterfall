@@ -48,6 +48,17 @@ Shader "Waterfall"
 		_NoiseDistortionAnimation("Noise Distortion Animation", Vector) = (0,0,0,0)
 		[IntRange]_NoiseDistortionOctaves("Noise Distortion Octaves", Range( 1 , 8)) = 1
 		_AlphaOutput("Alpha Output", Range( 0 , 1)) = 1
+		[HDR]_DepthSparklesColour("Depth Sparkles Colour", Color) = (1,1,1,1)
+		_DepthSparklesDistance("Depth Sparkles Distance", Float) = 1
+		_DepthSparklesNoiseScale("Depth Sparkles Noise Scale", Float) = 1
+		_DepthSparklesNoiseTiling1("Depth Sparkles Noise Tiling 1", Vector) = (1,1,1,0)
+		_DepthSparklesNoiseTiling2("Depth Sparkles Noise Tiling 2", Vector) = (1,1,1,0)
+		_DepthSparklesNoiseTilingMaskPower("Depth Sparkles Noise Tiling Mask Power", Float) = 1
+		_DepthSparklesNoiseAnimation("Depth Sparkles Noise Animation", Vector) = (0,0,0,0)
+		[IntRange]_DepthSparklesNoiseOctaves("Depth Sparkles Noise Octaves", Range( 1 , 4)) = 1
+		_DepthSparklesNoisePower("Depth Sparkles Noise Power", Float) = 2
+		_DepthSparklesRemapMin("Depth Sparkles Remap Min", Range( 0 , 1)) = 0
+		_DepthSparklesRemapMax("Depth Sparkles Remap Max", Range( 0 , 1)) = 1
 
 
 		//_TransmissionShadow( "Transmission Shadow", Range( 0, 1 ) ) = 0.5
@@ -373,20 +384,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -395,25 +412,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -768,7 +790,24 @@ Shader "Waterfall"
 				float3 Normals146 = BlendNormal( Curve_Normals144 , Noise_Normals139 );
 				
 				float3 lerpResult174 = lerp( float3( 0,0,0 ) , Colour121 , _ColourtoEmission);
-				float3 Emission172 = lerpResult174;
+				float localSimplexNoise_float2_g57 = ( 0.0 );
+				float3 lerpResult315 = lerp( _DepthSparklesNoiseTiling1 , _DepthSparklesNoiseTiling2 , pow( Curve27 , _DepthSparklesNoiseTilingMaskPower ));
+				float4 temp_output_10_0_g55 = ( float4( ( IN.ase_texcoord9.xyz * _DepthSparklesNoiseScale * lerpResult315 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _DepthSparklesNoiseAnimation * _TimeParameters.x ) ) );
+				float3 position2_g57 = (temp_output_10_0_g55).xyz;
+				float angle2_g57 = (temp_output_10_0_g55).w;
+				float octaves2_g57 = _DepthSparklesNoiseOctaves;
+				float noise2_g57 = 0.0;
+				float3 gradient2_g57 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g57 , angle2_g57 , octaves2_g57 , noise2_g57 , gradient2_g57 );
+				float smoothstepResult308 = smoothstep( _DepthSparklesRemapMin , _DepthSparklesRemapMax , pow( noise2_g57 , _DepthSparklesNoisePower ));
+				float4 ase_screenPosNorm = ScreenPos / ScreenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float screenDepth295 = LinearEyeDepth(SHADERGRAPH_SAMPLE_SCENE_DEPTH( ase_screenPosNorm.xy ),_ZBufferParams);
+				float distanceDepth295 = saturate( abs( ( screenDepth295 - LinearEyeDepth( ase_screenPosNorm.z,_ZBufferParams ) ) / ( _DepthSparklesDistance ) ) );
+				float smoothstepResult296 = smoothstep( 0.0 , 1.0 , ( 1.0 - distanceDepth295 ));
+				float Depth_Sparkles_Mask297 = smoothstepResult296;
+				float3 Depth_Sparkles299 = ( smoothstepResult308 * _DepthSparklesColour.rgb * _DepthSparklesColour.a * Depth_Sparkles_Mask297 );
+				float3 Emission172 = ( lerpResult174 + Depth_Sparkles299 );
 				
 				float2 texCoord75 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
 				float Raw_Mask_X99 = sin( ( texCoord75.x * PI ) );
@@ -779,8 +818,6 @@ Shader "Waterfall"
 				float Raw_Mask_Y105 = sin( ( texCoord101.y * PI ) );
 				float smoothstepResult114 = smoothstep( _MaskYRemapMin , _MaskYRemapMax , pow( Raw_Mask_Y105 , _MaskYPower ));
 				float Mask_Y113 = smoothstepResult114;
-				float4 ase_screenPosNorm = ScreenPos / ScreenPos.w;
-				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
 				float screenDepth129 = LinearEyeDepth(SHADERGRAPH_SAMPLE_SCENE_DEPTH( ase_screenPosNorm.xy ),_ZBufferParams);
 				float distanceDepth129 = saturate( abs( ( screenDepth129 - LinearEyeDepth( ase_screenPosNorm.z,_ZBufferParams ) ) / ( _DepthFade ) ) );
 				float smoothstepResult133 = smoothstep( 0.0 , 1.0 , distanceDepth129);
@@ -1148,20 +1185,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -1170,25 +1213,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -1616,20 +1664,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -1638,25 +1692,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -2042,20 +2101,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -2064,25 +2129,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -2325,7 +2395,25 @@ Shader "Waterfall"
 				float3 Colour121 = lerpResult120;
 				
 				float3 lerpResult174 = lerp( float3( 0,0,0 ) , Colour121 , _ColourtoEmission);
-				float3 Emission172 = lerpResult174;
+				float localSimplexNoise_float2_g57 = ( 0.0 );
+				float3 lerpResult315 = lerp( _DepthSparklesNoiseTiling1 , _DepthSparklesNoiseTiling2 , pow( Curve27 , _DepthSparklesNoiseTilingMaskPower ));
+				float4 temp_output_10_0_g55 = ( float4( ( IN.ase_texcoord5.xyz * _DepthSparklesNoiseScale * lerpResult315 ) , 0.0 ) - ( float4( 0,0,0,0 ) + ( _DepthSparklesNoiseAnimation * _TimeParameters.x ) ) );
+				float3 position2_g57 = (temp_output_10_0_g55).xyz;
+				float angle2_g57 = (temp_output_10_0_g55).w;
+				float octaves2_g57 = _DepthSparklesNoiseOctaves;
+				float noise2_g57 = 0.0;
+				float3 gradient2_g57 = float3( 0,0,0 );
+				SimplexNoise_float( position2_g57 , angle2_g57 , octaves2_g57 , noise2_g57 , gradient2_g57 );
+				float smoothstepResult308 = smoothstep( _DepthSparklesRemapMin , _DepthSparklesRemapMax , pow( noise2_g57 , _DepthSparklesNoisePower ));
+				float4 screenPos = IN.ase_texcoord6;
+				float4 ase_screenPosNorm = screenPos / screenPos.w;
+				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
+				float screenDepth295 = LinearEyeDepth(SHADERGRAPH_SAMPLE_SCENE_DEPTH( ase_screenPosNorm.xy ),_ZBufferParams);
+				float distanceDepth295 = saturate( abs( ( screenDepth295 - LinearEyeDepth( ase_screenPosNorm.z,_ZBufferParams ) ) / ( _DepthSparklesDistance ) ) );
+				float smoothstepResult296 = smoothstep( 0.0 , 1.0 , ( 1.0 - distanceDepth295 ));
+				float Depth_Sparkles_Mask297 = smoothstepResult296;
+				float3 Depth_Sparkles299 = ( smoothstepResult308 * _DepthSparklesColour.rgb * _DepthSparklesColour.a * Depth_Sparkles_Mask297 );
+				float3 Emission172 = ( lerpResult174 + Depth_Sparkles299 );
 				
 				float localSimplexNoise_Caustics_float2_g52 = ( 0.0 );
 				float temp_output_64_0 = pow( Curve27 , _NoiseTilingMaskPower );
@@ -2360,9 +2448,6 @@ Shader "Waterfall"
 				float Raw_Mask_Y105 = sin( ( texCoord101.y * PI ) );
 				float smoothstepResult114 = smoothstep( _MaskYRemapMin , _MaskYRemapMax , pow( Raw_Mask_Y105 , _MaskYPower ));
 				float Mask_Y113 = smoothstepResult114;
-				float4 screenPos = IN.ase_texcoord6;
-				float4 ase_screenPosNorm = screenPos / screenPos.w;
-				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
 				float screenDepth129 = LinearEyeDepth(SHADERGRAPH_SAMPLE_SCENE_DEPTH( ase_screenPosNorm.xy ),_ZBufferParams);
 				float distanceDepth129 = saturate( abs( ( screenDepth129 - LinearEyeDepth( ase_screenPosNorm.z,_ZBufferParams ) ) / ( _DepthFade ) ) );
 				float smoothstepResult133 = smoothstep( 0.0 , 1.0 , distanceDepth129);
@@ -2486,20 +2571,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -2508,25 +2599,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -2937,20 +3033,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -2959,25 +3061,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -3459,20 +3566,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -3481,25 +3594,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -3868,20 +3986,26 @@ Shader "Waterfall"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
+			float4 _NoiseDistortionAnimation;
+			float4 _NoiseOffset;
+			float4 _DepthSparklesColour;
+			float4 _ColourB;
 			float4 _ColourA;
 			float4 _NoiseAnimation;
-			float4 _ColourB;
-			float4 _NoiseOffset;
-			float4 _NoiseDistortionAnimation;
+			float4 _DepthSparklesNoiseAnimation;
 			float3 _CurveAxis;
 			float3 _NoiseTiling1;
 			float3 _NoiseTiling2;
-			float _CurveNormalStrength;
-			float _NoiseNormalStrength;
-			float _ColourtoEmission;
+			float3 _DepthSparklesNoiseTiling2;
+			float3 _DepthSparklesNoiseTiling1;
 			float _Metallic;
-			float _Smoothness;
+			float _DepthSparklesNoiseTilingMaskPower;
+			float _DepthSparklesDistance;
+			float _DepthSparklesNoiseOctaves;
+			float _DepthSparklesNoisePower;
+			float _CurveShift;
 			float _MaskPower1;
+			float _MaskPower2RemapMin;
 			float _MaskPower2RemapMax;
 			float _MaskPower2;
 			float _MaskCurvePower;
@@ -3890,25 +4014,30 @@ Shader "Waterfall"
 			float _MaskYPower;
 			float _DepthFade;
 			float _SpecularMaskOffset;
-			float _MaskPower2RemapMin;
-			float _CurveShift;
-			float _NoiseVertexOffset;
-			float _CurveVertexNormalPower;
+			float _Smoothness;
+			float _DepthSparklesNoiseScale;
+			float _NoiseNormalStrength;
+			float _DepthSparklesRemapMin;
 			float _CurvePower;
 			float _CurveRemapMin;
 			float _CurveRemapMax;
 			float _Curve;
 			float _NoiseRemapMin;
 			float _NoiseRemapMax;
-			float _ColourPower;
 			float _NoiseScale;
+			float _NoiseTilingMaskPower;
 			float _NoiseDistortionScale;
 			float _NoiseDistortionOctaves;
 			float _NoiseDistortion;
 			float _NoiseAnimationFPS;
 			float _NoisePower;
+			float _NoiseVertexOffset;
+			float _CurveVertexNormalPower;
+			float _ColourPower;
+			float _CurveNormalStrength;
 			float _SpecularMaskPower;
-			float _NoiseTilingMaskPower;
+			float _ColourtoEmission;
+			float _DepthSparklesRemapMax;
 			float _AlphaOutput;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
@@ -4204,11 +4333,11 @@ Node;AmplifyShaderEditor.RangedFloatNode;19;-2688,-1456;Inherit;False;Property;_
 Node;AmplifyShaderEditor.FunctionNode;21;-2176,-1408;Inherit;False;Inverse Lerp;-1;;1;09cbe79402f023141a4dc1fddd4c9511;0;3;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SaturateNode;16;-1920,-1408;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;27;-1664,-1408;Inherit;False;Curve;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;65;-3584,624;Inherit;False;Property;_NoiseTilingMaskPower;Noise Tiling Mask Power;16;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;29;-3584,544;Inherit;False;27;Curve;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.PowerNode;64;-3200,512;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;65;-3584,624;Inherit;False;Property;_NoiseTilingMaskPower;Noise Tiling Mask Power;16;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.Vector3Node;63;-3584,400;Inherit;False;Property;_NoiseTiling2;Noise Tiling 2;15;0;Create;True;0;0;0;False;0;False;1,1,1;1,1,1;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.Vector3Node;40;-3584,256;Inherit;False;Property;_NoiseTiling1;Noise Tiling 1;14;0;Create;True;0;0;0;False;0;False;1,1,1;1,1,1;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.PowerNode;64;-3200,512;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.PosVertexDataNode;252;-3456,-768;Inherit;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.RangedFloatNode;255;-3456,-624;Inherit;False;Property;_NoiseDistortionScale;Noise Distortion Scale;38;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.Vector4Node;257;-3456,-128;Inherit;False;Property;_NoiseDistortionAnimation;Noise Distortion Animation;41;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
@@ -4241,25 +4370,24 @@ Node;AmplifyShaderEditor.GetLocalVarNode;239;-1792,1952;Inherit;False;27;Curve;1
 Node;AmplifyShaderEditor.PowerNode;59;-1792,128;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;73;-2176,384;Inherit;False;Property;_NoiseRemapMin;Noise Remap Min;21;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;74;-2176,464;Inherit;False;Property;_NoiseRemapMax;Noise Remap Max;22;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.TextureCoordinatesNode;159;-3968,2688;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;165;-3968,2816;Inherit;False;Property;_SpecularMaskOffset;Specular Mask Offset;33;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;103;-3328,1280;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SinOpNode;76;-3072,1024;Inherit;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.NormalVertexDataNode;204;-1792,1792;Inherit;False;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.PowerNode;240;-1408,1952;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.TextureCoordinatesNode;159;-3968,3840;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;165;-3968,3968;Inherit;False;Property;_SpecularMaskOffset;Specular Mask Offset;33;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SmoothstepOpNode;72;-1536,128;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.PiNode;160;-3584,2816;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleAddOpNode;164;-3584,2688;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;2.68;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SinOpNode;104;-3072,1280;Inherit;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;99;-2816,1024;Inherit;False;Raw Mask X;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;238;-1152,1792;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;1,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.PiNode;160;-3584,3968;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;164;-3584,3840;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;2.68;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SaturateNode;66;-1280,128;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;161;-3328,2688;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;100;-3584,1664;Inherit;False;99;Raw Mask X;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;90;-3584,1824;Inherit;False;Property;_MaskPower2;Mask Power 2;26;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;105;-2816,1280;Inherit;False;Raw Mask Y;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.NormalizeNode;242;-992,1792;Inherit;False;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SinOpNode;162;-3072,2688;Inherit;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;161;-3328,3840;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.PowerNode;94;-3248,1760;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;83;-3584,1744;Inherit;False;Property;_MaskPower1;Mask Power 1;25;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;88;-3584,2176;Inherit;False;27;Curve;1;0;OBJECT;;False;1;FLOAT;0
@@ -4268,36 +4396,37 @@ Node;AmplifyShaderEditor.RangedFloatNode;97;-3584,1920;Inherit;False;Property;_M
 Node;AmplifyShaderEditor.RangedFloatNode;98;-3584,2000;Inherit;False;Property;_MaskPower2RemapMax;Mask Power 2 Remap Max;29;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;108;-2816,2048;Inherit;False;105;Raw Mask Y;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;112;-2816,2128;Inherit;False;Property;_MaskYPower;Mask Y Power;30;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;131;-3072,2432;Inherit;False;Property;_DepthFade;Depth Fade;36;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;69;-1024,128;Inherit;False;Noise;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;202;-768,1792;Inherit;False;Curved Vertex Normals;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RangedFloatNode;167;-3072,2912;Inherit;False;Property;_SpecularMaskPower;Specular Mask Power;34;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;131;-3584,2432;Inherit;False;Property;_DepthFade;Depth Fade;36;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SinOpNode;162;-3072,3840;Inherit;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.PowerNode;82;-3248,1664;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SmoothstepOpNode;96;-3072,1760;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.PowerNode;92;-3200,2176;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.PowerNode;111;-2560,2048;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;116;-2816,2208;Inherit;False;Property;_MaskYRemapMin;Mask Y Remap Min;31;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;117;-2816,2288;Inherit;False;Property;_MaskYRemapMax;Mask Y Remap Max;32;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.DepthFade;129;-2816,2432;Inherit;False;True;True;True;2;1;FLOAT3;0,0,0;False;0;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.AbsOpNode;169;-2816,2688;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;179;-1792,2176;Inherit;False;69;Noise;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RangedFloatNode;184;-1792,2256;Inherit;False;Property;_NoiseVertexOffset;Noise Vertex Offset;35;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;203;-1408,2304;Inherit;False;202;Curved Vertex Normals;1;0;OBJECT;;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.PowerNode;166;-2688,2688;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.DepthFade;129;-3200,2432;Inherit;False;True;True;True;2;1;FLOAT3;0,0,0;False;0;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;167;-3072,4064;Inherit;False;Property;_SpecularMaskPower;Specular Mask Power;34;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.AbsOpNode;169;-2816,3840;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.LerpOp;89;-2688,1664;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SmoothstepOpNode;114;-2400,2048;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SmoothstepOpNode;133;-2560,2432;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;185;-1408,2176;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SaturateNode;246;-1152,2304;Inherit;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;291;-2176,-1152;Inherit;False;27;Curve;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.Vector3Node;292;-2176,-1072;Inherit;False;Property;_CurveAxis;Curve Axis;12;0;Create;True;0;0;0;False;0;False;0,1,0;0,0,1;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.RangedFloatNode;293;-2176,-928;Inherit;False;Property;_Curve;Curve;7;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SmoothstepOpNode;133;-2944,2432;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.PowerNode;166;-2688,3840;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;106;-2432,1664;Inherit;True;Mask X;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;113;-2176,2048;Inherit;True;Mask Y;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RegisterLocalVarNode;130;-2304,2432;Inherit;False;Depth Fade;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RegisterLocalVarNode;163;-2432,2688;Inherit;False;Specular Mask;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;187;-896,2176;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;290;-1920,-1152;Inherit;False;3;3;0;FLOAT;0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;130;-2688,2432;Inherit;False;Depth Fade;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;163;-2432,3840;Inherit;False;Specular Mask;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;79;-2304,640;Inherit;False;69;Noise;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;115;-2304,848;Inherit;False;113;Mask Y;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;132;-2304,928;Inherit;False;130;Depth Fade;1;0;OBJECT;;False;1;FLOAT;0
@@ -4340,18 +4469,11 @@ Node;AmplifyShaderEditor.GetLocalVarNode;267;-5120,128;Inherit;False;263;_Camera
 Node;AmplifyShaderEditor.SimpleSubtractOpNode;271;-4736,256;Inherit;False;2;0;FLOAT4;0,0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT4;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;146;-640,1408;Inherit;False;Normals;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;81;-1536,768;Inherit;False;Alpha;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;134;-896,640;Inherit;False;Property;_Metallic;Metallic;3;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;135;-896,720;Inherit;False;Property;_Smoothness;Smoothness;4;0;Create;True;0;0;0;False;0;False;0.5;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.GetLocalVarNode;140;-896,464;Inherit;False;146;Normals;1;0;OBJECT;;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.GetLocalVarNode;70;-896,800;Inherit;False;277;Alpha Output;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;273;-4992,384;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;272;-5376,432;Inherit;False;139;Noise Normals;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.ScreenPosInputsNode;268;-5376,256;Float;False;0;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.RangedFloatNode;274;-5376,512;Inherit;False;Property;_CameraOpaqueTextureDistortion;Camera Opaque Texture Distortion;43;0;Create;True;0;0;0;False;0;False;0;0;0;0.1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.GetLocalVarNode;178;-896,560;Inherit;False;172;Emission;1;0;OBJECT;;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RegisterLocalVarNode;172;-384,-384;Inherit;False;Emission;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.TexturePropertyNode;262;-4608,-128;Inherit;True;Global;_CameraOpaqueTexture;_CameraOpaqueTexture;44;0;Create;True;0;0;0;True;0;False;None;;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.GetLocalVarNode;122;-896,384;Inherit;False;121;Colour;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.LerpOp;120;-1024,-768;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;279;-1024,-896;Inherit;False;269;Camera Opaque Texture Colour;1;0;OBJECT;;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.LerpOp;282;-640,-896;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
@@ -4359,7 +4481,42 @@ Node;AmplifyShaderEditor.GetLocalVarNode;283;-1024,-640;Inherit;False;81;Alpha;1
 Node;AmplifyShaderEditor.RegisterLocalVarNode;121;-384,-768;Inherit;False;Colour;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;278;-640,-256;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.GetLocalVarNode;285;-1024,-128;Inherit;False;269;Camera Opaque Texture Colour;1;0;OBJECT;;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.GetLocalVarNode;32;-896,880;Inherit;False;190;Vertex Offset;1;0;OBJECT;;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.RangedFloatNode;294;-3584,2688;Inherit;False;Property;_DepthSparklesDistance;Depth Sparkles Distance;47;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;298;-3456,2944;Inherit;False;Scale Tiling Offset Animation;-1;;55;5d06ea95f1a5de046a6557c33d98975a;1,21,0;6;4;FLOAT3;0,0,0;False;7;FLOAT;1;False;8;FLOAT3;1,1,1;False;9;FLOAT4;0,0,0,0;False;19;INT;60;False;12;FLOAT4;0,0,0,0;False;2;FLOAT3;0;FLOAT;15
+Node;AmplifyShaderEditor.FunctionNode;300;-3072,2944;Inherit;False;Simplex Noise;-1;;57;2176dbf1d4f695d429b50c644e5b760c;0;3;4;FLOAT3;0,0,0;False;6;FLOAT;0;False;7;FLOAT;1;False;2;FLOAT;0;FLOAT3;3
+Node;AmplifyShaderEditor.PosVertexDataNode;302;-3968,2944;Inherit;False;0;0;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;301;-3456,3120;Inherit;False;Property;_DepthSparklesNoiseOctaves;Depth Sparkles Noise Octaves;53;1;[IntRange];Create;True;0;0;0;False;0;False;1;0;1;4;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;307;-3072,3072;Inherit;False;Property;_DepthSparklesNoisePower;Depth Sparkles Noise Power;54;0;Create;True;0;0;0;False;0;False;2;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.PowerNode;306;-2688,2944;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SmoothstepOpNode;308;-2304,2944;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;309;-2688,3072;Inherit;False;Property;_DepthSparklesRemapMin;Depth Sparkles Remap Min;55;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;310;-2688,3152;Inherit;False;Property;_DepthSparklesRemapMax;Depth Sparkles Remap Max;56;0;Create;True;0;0;0;False;0;False;1;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;134;-896,768;Inherit;False;Property;_Metallic;Metallic;3;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;135;-896,848;Inherit;False;Property;_Smoothness;Smoothness;4;0;Create;True;0;0;0;False;0;False;0.5;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.GetLocalVarNode;140;-896,592;Inherit;False;146;Normals;1;0;OBJECT;;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.GetLocalVarNode;70;-896,928;Inherit;False;277;Alpha Output;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.GetLocalVarNode;32;-896,1008;Inherit;False;190;Vertex Offset;1;0;OBJECT;;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.GetLocalVarNode;178;-896,688;Inherit;False;172;Emission;1;0;OBJECT;;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;172;0,-384;Inherit;False;Emission;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.GetLocalVarNode;312;-640,-128;Inherit;False;299;Depth Sparkles;1;0;OBJECT;;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;311;-256,-384;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.Vector4Node;305;-3968,3456;Inherit;False;Property;_DepthSparklesNoiseAnimation;Depth Sparkles Noise Animation;52;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.LerpOp;315;-3968,3200;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.GetLocalVarNode;316;-4608,3488;Inherit;False;27;Curve;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.PowerNode;318;-4224,3456;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.Vector3Node;314;-4608,3200;Inherit;False;Property;_DepthSparklesNoiseTiling1;Depth Sparkles Noise Tiling 1;49;0;Create;True;0;0;0;False;0;False;1,1,1;1,1,1;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;313;-4608,3344;Inherit;False;Property;_DepthSparklesNoiseTiling2;Depth Sparkles Noise Tiling 2;50;0;Create;True;0;0;0;False;0;False;1,1,1;1,1,1;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.RangedFloatNode;317;-4608,3568;Inherit;False;Property;_DepthSparklesNoiseTilingMaskPower;Depth Sparkles Noise Tiling Mask Power;51;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;321;-1920,2944;Inherit;False;4;4;0;FLOAT;0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.RangedFloatNode;303;-3968,3088;Inherit;False;Property;_DepthSparklesNoiseScale;Depth Sparkles Noise Scale;48;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;297;-2432,2688;Inherit;False;Depth Sparkles Mask;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;299;-1664,2944;Inherit;False;Depth Sparkles;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.ColorNode;320;-2304,3072;Inherit;False;Property;_DepthSparklesColour;Depth Sparkles Colour;46;1;[HDR];Create;True;0;0;0;False;0;False;1,1,1,1;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.GetLocalVarNode;122;-896,512;Inherit;False;121;Colour;1;0;OBJECT;;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.GetLocalVarNode;322;-2304,3264;Inherit;False;297;Depth Sparkles Mask;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.DepthFade;295;-3200,2688;Inherit;False;True;True;True;2;1;FLOAT3;0,0,0;False;0;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.OneMinusNode;323;-2944,2688;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SmoothstepOpNode;296;-2688,2688;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;3;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;4;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;Meta;0;4;Meta;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;False;0;;0;0;Standard;0;False;0
@@ -4368,8 +4525,8 @@ Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;6;0,0;Float;False;False;-1;
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;7;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;GBuffer;0;7;GBuffer;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalGBuffer;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;8;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;SceneSelectionPass;0;8;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;9;0,0;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ScenePickingPass;0;9;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;0;-624,512;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;-384,384;Float;False;True;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;Waterfall;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;42;Lighting Model;0;0;Workflow;1;0;Surface;1;638636742893818560;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;638637176949248075;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;1;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;1;638636801313177418;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;Receive Shadows;1;0;Receive SSAO;1;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;1;638636719521391824;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;10;False;True;True;True;True;True;True;False;True;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;0;-624,640;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;-384,512;Float;False;True;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;Waterfall;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;2;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Transparent=RenderType;Queue=Transparent=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;5;False;;10;False;;1;1;False;;10;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForwardOnly;False;False;0;;0;0;Standard;42;Lighting Model;0;0;Workflow;1;0;Surface;1;638636742893818560;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;638637176949248075;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;1;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;1;638636801313177418;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;Receive Shadows;1;0;Receive SSAO;1;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;Tessellation;1;638636719521391824;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;10;False;True;True;True;True;True;True;False;True;True;False;;False;0
 WireConnection;25;0;10;1
 WireConnection;25;1;26;0
 WireConnection;22;0;25;0
@@ -4419,22 +4576,22 @@ WireConnection;240;1;241;0
 WireConnection;72;0;59;0
 WireConnection;72;1;73;0
 WireConnection;72;2;74;0
-WireConnection;164;0;159;1
-WireConnection;164;1;165;0
 WireConnection;104;0;103;0
 WireConnection;99;0;76;0
 WireConnection;238;0;204;0
 WireConnection;238;2;240;0
+WireConnection;164;0;159;1
+WireConnection;164;1;165;0
 WireConnection;66;0;72;0
-WireConnection;161;0;164;0
-WireConnection;161;1;160;0
 WireConnection;105;0;104;0
 WireConnection;242;0;238;0
-WireConnection;162;0;161;0
+WireConnection;161;0;164;0
+WireConnection;161;1;160;0
 WireConnection;94;0;100;0
 WireConnection;94;1;90;0
 WireConnection;69;0;66;0
 WireConnection;202;0;242;0
+WireConnection;162;0;161;0
 WireConnection;82;0;100;0
 WireConnection;82;1;83;0
 WireConnection;96;0;94;0
@@ -4446,27 +4603,27 @@ WireConnection;111;0;108;0
 WireConnection;111;1;112;0
 WireConnection;129;0;131;0
 WireConnection;169;0;162;0
-WireConnection;166;0;169;0
-WireConnection;166;1;167;0
 WireConnection;89;0;82;0
 WireConnection;89;1;96;0
 WireConnection;89;2;92;0
 WireConnection;114;0;111;0
 WireConnection;114;1;116;0
 WireConnection;114;2;117;0
-WireConnection;133;0;129;0
 WireConnection;185;0;179;0
 WireConnection;185;1;184;0
 WireConnection;246;0;203;0
+WireConnection;133;0;129;0
+WireConnection;166;0;169;0
+WireConnection;166;1;167;0
 WireConnection;106;0;89;0
 WireConnection;113;0;114;0
-WireConnection;130;0;133;0
-WireConnection;163;0;166;0
 WireConnection;187;0;185;0
 WireConnection;187;1;246;0
 WireConnection;290;0;291;0
 WireConnection;290;1;292;0
 WireConnection;290;2;293;0
+WireConnection;130;0;133;0
+WireConnection;163;0;166;0
 WireConnection;188;0;187;0
 WireConnection;289;0;290;0
 WireConnection;80;0;79;0
@@ -4505,7 +4662,6 @@ WireConnection;146;0;145;0
 WireConnection;81;0;80;0
 WireConnection;273;0;272;0
 WireConnection;273;1;274;0
-WireConnection;172;0;174;0
 WireConnection;120;0;119;5
 WireConnection;120;1;71;5
 WireConnection;120;2;124;0
@@ -4515,6 +4671,35 @@ WireConnection;282;2;283;0
 WireConnection;121;0;120;0
 WireConnection;278;0;174;0
 WireConnection;278;1;285;0
+WireConnection;298;4;302;0
+WireConnection;298;7;303;0
+WireConnection;298;8;315;0
+WireConnection;298;9;305;0
+WireConnection;300;4;298;0
+WireConnection;300;6;298;15
+WireConnection;300;7;301;0
+WireConnection;306;0;300;0
+WireConnection;306;1;307;0
+WireConnection;308;0;306;0
+WireConnection;308;1;309;0
+WireConnection;308;2;310;0
+WireConnection;172;0;311;0
+WireConnection;311;0;174;0
+WireConnection;311;1;312;0
+WireConnection;315;0;314;0
+WireConnection;315;1;313;0
+WireConnection;315;2;318;0
+WireConnection;318;0;316;0
+WireConnection;318;1;317;0
+WireConnection;321;0;308;0
+WireConnection;321;1;320;5
+WireConnection;321;2;320;4
+WireConnection;321;3;322;0
+WireConnection;297;0;296;0
+WireConnection;299;0;321;0
+WireConnection;295;0;294;0
+WireConnection;323;0;295;0
+WireConnection;296;0;323;0
 WireConnection;1;0;122;0
 WireConnection;1;1;140;0
 WireConnection;1;2;178;0
@@ -4523,4 +4708,4 @@ WireConnection;1;4;135;0
 WireConnection;1;6;70;0
 WireConnection;1;8;32;0
 ASEEND*/
-//CHKSM=C471D7A6162068F8193B05ED7FC846E04C19CB78
+//CHKSM=DF13791EE558BB2FF0838368570B41CB4AA1C9C1
